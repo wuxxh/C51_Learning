@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   MAIN                                                              08/26/2024 20:40:34 PAGE 1   
+C51 COMPILER V9.60.0.0   MAIN                                                              08/26/2024 20:45:55 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
@@ -9,63 +9,75 @@ COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE 
 line level    source
 
    1          #include "reg52.h"
-   2          
-   3          sbit led = P2^0;
-   4          char rdata;
-   5          
-   6          void delay_ms(unsigned int xms)   //@12MHz
-   7          {
-   8   1          unsigned int i, j;
-   9   1          for(i=xms;i>0;i--)
-  10   1          {
-  11   2              for(j=124;j>0;j--)
-  12   2              {}
-  13   2          }
-  14   1      }
-  15          
-  16          void uart_receive() interrupt 4
-  17          {
-  18   1        if(RI == 1){
-  19   2            RI = 0;
-  20   2            rdata = SBUF;
-  21   2            if(rdata == 'O'){
-  22   3              //点亮led
-  23   3              led = 0;
-  24   3            }
-  25   2            if(rdata == 'C'){
-  26   3              led = 1;
-  27   3            }
-  28   2          }
-  29   1      }
-  30          
-  31          
-  32          void main(){
-  33   1        //模式1:8位bit,波特率可变(常用)
-  34   1        //SCON = 0x40;
-  35   1        //REN = 1;
-  36   1        SCON = 0x50; //REN=1,允许接受数据
-  37   1        
-  38   1        TMOD &= 0x0F;
-  39   1        TMOD |= 0x20;
-  40   1        
-  41   1        TR1 = 1;
-  42   1        TL1 = 0xFD;
-  43   1        TH1 = 0xFD;
-  44   1        
-  45   1        ES = 1;
-  46   1        EA = 1;
+   2          #include "stdio.h"
+   3          
+   4          
+   5          sbit led = P2^0;
+   6          char rdata;
+   7          
+   8          void delay_ms(unsigned int xms)   //@12MHz
+   9          {
+  10   1          unsigned int i, j;
+  11   1          for(i=xms;i>0;i--)
+  12   1          {
+  13   2              for(j=124;j>0;j--)
+  14   2              {}
+  15   2          }
+  16   1      }
+  17          
+  18          void uart_receive() interrupt 4
+  19          {
+  20   1        if(RI == 1){
+  21   2            RI = 0;
+  22   2            rdata = SBUF;
+  23   2            if(rdata == 'O'){
+  24   3              //点亮led
+  25   3              led = 0;
+  26   3            }
+  27   2            if(rdata == 'C'){
+  28   3              led = 1;
+  29   3            }
+  30   2          }
+  31   1      }
+  32          
+  33          char putchar(char dat) //将printf和串口结合,函数名不能变
+  34          {
+  35   1        SBUF = dat;
+  36   1        while(TI == 0);
+  37   1        TI = 0;
+  38   1        return dat;
+  39   1      }
+  40          
+  41          
+  42          void main(){
+  43   1        //模式1:8位bit,波特率可变(常用)
+  44   1        //SCON = 0x40;
+  45   1        //REN = 1;
+  46   1        SCON = 0x50; //REN=1,允许接受数据
   47   1        
-  48   1        while(1){
-  49   2          delay_ms(20000);
-  50   2        }
-  51   1      }
+  48   1        TMOD &= 0x0F;
+  49   1        TMOD |= 0x20;
+  50   1        
+  51   1        TR1 = 1;
+  52   1        TL1 = 0xFD;
+  53   1        TH1 = 0xFD;
+  54   1        
+C51 COMPILER V9.60.0.0   MAIN                                                              08/26/2024 20:45:55 PAGE 2   
+
+  55   1        ES = 1;
+  56   1        EA = 1;
+  57   1        
+  58   1        printf("HelloWorld!");
+  59   1        
+  60   1        while(1){
+  61   2          delay_ms(20000);
+  62   2        }
+  63   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-C51 COMPILER V9.60.0.0   MAIN                                                              08/26/2024 20:40:34 PAGE 2   
-
-   CODE SIZE        =     91    ----
-   CONSTANT SIZE    =   ----    ----
+   CODE SIZE        =    108    ----
+   CONSTANT SIZE    =     12    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
    DATA SIZE        =      1    ----

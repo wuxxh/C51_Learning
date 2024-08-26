@@ -1,4 +1,6 @@
 #include "reg52.h"
+#include "stdio.h"
+
 
 sbit led = P2^0;
 char rdata;
@@ -28,6 +30,14 @@ void uart_receive() interrupt 4
 		}
 }
 
+char putchar(char dat) //将printf和串口结合,函数名不能变
+{
+	SBUF = dat;
+	while(TI == 0);
+	TI = 0;
+	return dat;
+}
+
 
 void main(){
 	//模式1:8位bit,波特率可变(常用)
@@ -44,6 +54,8 @@ void main(){
 	
 	ES = 1;
 	EA = 1;
+	
+	printf("HelloWorld!");
 	
 	while(1){
 		delay_ms(20000);
