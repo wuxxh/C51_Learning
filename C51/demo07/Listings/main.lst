@@ -1,0 +1,77 @@
+C51 COMPILER V9.60.0.0   MAIN                                                              08/26/2024 20:40:34 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\main
+                    -.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include "reg52.h"
+   2          
+   3          sbit led = P2^0;
+   4          char rdata;
+   5          
+   6          void delay_ms(unsigned int xms)   //@12MHz
+   7          {
+   8   1          unsigned int i, j;
+   9   1          for(i=xms;i>0;i--)
+  10   1          {
+  11   2              for(j=124;j>0;j--)
+  12   2              {}
+  13   2          }
+  14   1      }
+  15          
+  16          void uart_receive() interrupt 4
+  17          {
+  18   1        if(RI == 1){
+  19   2            RI = 0;
+  20   2            rdata = SBUF;
+  21   2            if(rdata == 'O'){
+  22   3              //点亮led
+  23   3              led = 0;
+  24   3            }
+  25   2            if(rdata == 'C'){
+  26   3              led = 1;
+  27   3            }
+  28   2          }
+  29   1      }
+  30          
+  31          
+  32          void main(){
+  33   1        //模式1:8位bit,波特率可变(常用)
+  34   1        //SCON = 0x40;
+  35   1        //REN = 1;
+  36   1        SCON = 0x50; //REN=1,允许接受数据
+  37   1        
+  38   1        TMOD &= 0x0F;
+  39   1        TMOD |= 0x20;
+  40   1        
+  41   1        TR1 = 1;
+  42   1        TL1 = 0xFD;
+  43   1        TH1 = 0xFD;
+  44   1        
+  45   1        ES = 1;
+  46   1        EA = 1;
+  47   1        
+  48   1        while(1){
+  49   2          delay_ms(20000);
+  50   2        }
+  51   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+C51 COMPILER V9.60.0.0   MAIN                                                              08/26/2024 20:40:34 PAGE 2   
+
+   CODE SIZE        =     91    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
